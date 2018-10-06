@@ -8,21 +8,21 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class JSONReader {
+class JSONReader {
 
-    public Iterator<String> readJSON (String fileName) {
+    JSONArray readJSON () {
 
         JSONParser parser = new JSONParser();
-        Iterator<String> iterator = null;
+        JSONArray links = null;
 
         try {
 
-            Object obj = parser.parse(new FileReader(fileName));
+            Object obj = parser.parse(new FileReader("src/main/resources/data.json"));
 
             JSONObject jsonObject = (JSONObject) obj;
 
-            JSONArray links = (JSONArray) jsonObject.get("links");
-            iterator = links.iterator();
+            links = (JSONArray) jsonObject.get("links");
+
 
         } catch (FileNotFoundException e) {
             System.out.println("The program failed trying to open the JSON file!");
@@ -31,10 +31,10 @@ public class JSONReader {
             System.out.println("The program failed trying to read the JSON file!");
             System.out.println(e.getMessage());
         } catch (ParseException e) {
-            System.out.println("The program failed trying to read the JSON file!");
+            System.out.println("The program failed trying to parse the JSON file!");
             System.out.println(e.getMessage());
         }
 
-        return iterator;
+        return links;
     }
 }
