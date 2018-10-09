@@ -22,7 +22,7 @@ public class Crawler {
     private List<String> unvisitedPages = new ArrayList<>();
     private  Set<String> visitedPages = new HashSet<>();
 
-    private void crawl(String fileName) {
+    void crawl(String fileName) {
         long startTime = System.nanoTime();
 
         // Get the initial list of links from the JSON.
@@ -91,15 +91,15 @@ public class Crawler {
     }
 
     // Getters for testing purposes
-    public int getSuccesses() {
+    int getSuccesses() {
         return successes;
     }
 
-    public int getErrors() {
+    int getErrors() {
         return errors;
     }
 
-    public int getNumOfRequests() {
+    int getNumOfRequests() {
         return numOfRequests;
     }
 

@@ -1,0 +1,6 @@
+{
+  "links": [
+    "https://httpbin.org/status/400",
+    "https://httpbin.org/status/404"
+  ]
+}
