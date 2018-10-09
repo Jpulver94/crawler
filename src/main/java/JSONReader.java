@@ -6,33 +6,31 @@ import org.json.simple.parser.ParseException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
 
 class JSONReader {
 
-    JSONArray readJSON () {
-
+    JSONArray readJSON (String fileName) {
+        // Create a parser
         JSONParser parser = new JSONParser();
+        // Set links to null at first to check later if it is set properly
         JSONArray links = null;
 
         try {
-
-            Object obj = parser.parse(new FileReader("src/main/resources/data.json"));
+            // Set file to an object
+            Object obj = parser.parse(new FileReader(fileName));
 
             JSONObject jsonObject = (JSONObject) obj;
-
+            // Store links of JSON into the JSONArray
             links = (JSONArray) jsonObject.get("links");
 
 
         } catch (FileNotFoundException e) {
-            System.out.println("The program failed trying to open the JSON file!");
-            System.out.println(e.getMessage());
+            System.out.println("That file was not found!");
         } catch (IOException e) {
             System.out.println("The program failed trying to read the JSON file!");
-            System.out.println(e.getMessage());
+
         } catch (ParseException e) {
             System.out.println("The program failed trying to parse the JSON file!");
-            System.out.println(e.getMessage());
         }
 
         return links;

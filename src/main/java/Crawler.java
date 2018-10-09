@@ -6,10 +6,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Crawler {
@@ -20,11 +22,11 @@ public class Crawler {
     private List<String> unvisitedPages = new ArrayList<>();
     private  Set<String> visitedPages = new HashSet<>();
 
-    private void crawl() {
+    private void crawl(String fileName) {
         long startTime = System.nanoTime();
 
         // Get the initial list of links from the JSON.
-        JSONArray initialLinks = new JSONReader().readJSON();
+        JSONArray initialLinks = new JSONReader().readJSON(fileName);
 
         // Make sure the links are not null.
         if(initialLinks == null) {
@@ -57,14 +59,23 @@ public class Crawler {
                     // Grab a link from this page
                     String currLink  = link.attr("abs:href");
                     // Check if the link has already been visited.
-                    if(visitedPages.contains(currLink)) continue;
+                    if(visitedPages.contains(currLink) /*|| unvisitedPages.contains(currLink)*/) continue;
 //                    System.out.println(currLink);
                     // It hasn't been visited so add it to the list.
                     unvisitedPages.add(currLink);
 
                 }
+            } catch (MalformedURLException | IllegalArgumentException e) {
+                errors++;
+                System.out.print("The URL is invalid. ");
+                System.out.println(e.getMessage());
+            }catch (SocketTimeoutException e) {
+                errors++;
+                System.out.println("The connection has timed out on : " + currURL);
+                System.out.println(e.getMessage());
             } catch (IOException e) {
                 errors++;
+                System.out.print("There was an error with the URL ");
                 System.out.println(e.getMessage() + ": " + currURL);
             }
         }
@@ -79,8 +90,34 @@ public class Crawler {
 
     }
 
+    // Getters for testing purposes
+    public int getSuccesses() {
+        return successes;
+    }
+
+    public int getErrors() {
+        return errors;
+    }
+
+    public int getNumOfRequests() {
+        return numOfRequests;
+    }
+
     public static void main(String[] args) {
 
-        new Crawler().crawl();
+        System.out.println("Please enter a JSON file with a list of URLs similar to the example file data.json.");
+        System.out.println("Or enter 'n' to use default file.");
+        // Using Scanner for Getting Input from User
+        Scanner in = new Scanner(System.in);
+
+        String fileName = in.nextLine();
+        if(fileName.compareToIgnoreCase("n") == 0) {
+            System.out.println("Using the default file src/main/resources/data.json");
+            new Crawler().crawl("src/main/resources/data.json");
+        }
+        else {
+            System.out.println("You entered the file " + fileName);
+            new Crawler().crawl(fileName);
+        }
     }
 }
